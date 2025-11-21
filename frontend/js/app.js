@@ -1,3 +1,4 @@
+
 const API_BASE = (location.hostname === 'localhost' ? 'http://localhost:4000' : '') + '/api';
 
 const storage = {
@@ -96,7 +97,6 @@ document.addEventListener('submit', async (e)=> {
   }
 
 });
-
 document.addEventListener('click', (e)=>{
   if (e.target.id === 'btn-logout') {
     localStorage.removeItem('token');
@@ -142,7 +142,7 @@ const app = {
       headerToolbar: { left:'prev,next today', center:'title', right:'dayGridMonth,timeGridWeek,timeGridDay' },
       events,
       eventClick: function(info) {
-        alert(info.event.title + "\n" + (info.event.extendedProps.notes || ''));
+        alert(info.event.title + "\\n" + (info.event.extendedProps.notes || ''));
       }
     });
     calendar.render();
@@ -196,60 +196,20 @@ const app = {
     calendar.render();
   },
 
-  // *** רשימת האירועים שלי + מחיקה ***
   loadMyEventsList: async function() {
     app.setUserInfo();
     const data = await apiFetch('/events/mine');
     const ul = document.getElementById('myEventsList');
     if (!ul) return;
-
     ul.innerHTML = '';
-
     data.forEach(ev => {
       const li = document.createElement('li');
-
-      // טקסט האירוע
-      const span = document.createElement('span');
-      span.textContent = `${ev.event_date} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}`;
-      li.appendChild(span);
-
-      // כפתור מחיקה
-      const btn = document.createElement('button');
-      btn.textContent = 'מחק';
-      btn.className = 'btn-secondary btn-delete-event';
-      btn.dataset.id = ev.id; // מזהה אירוע למחיקה
-      li.appendChild(btn);
-
+      li.textContent = `${ev.event_date} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}`;
       ul.appendChild(li);
     });
-
-    // האזנה למחיקה (מוגדרת פעם אחת לכל הרשימה)
-    ul.onclick = async (e) => {
-      const target = e.target;
-      if (!target || !target.classList.contains('btn-delete-event')) return;
-
-      const id = target.dataset.id;
-      if (!id) return;
-
-      const ok = confirm('האם אתה בטוח שברצונך למחוק את האירוע?');
-      if (!ok) return;
-
-      try {
-        await apiFetch(`/events/${id}`, { method: 'DELETE' });
-        alert('האירוע נמחק');
-        // רענון רשימת האירועים
-        app.loadMyEventsList();
-        // רענון היומן הגרפי אם קיים
-        if (document.body.contains(document.querySelector('#myCalendar'))) {
-          app.initMyEventsCalendar();
-        }
-      } catch (err) {
-        console.error(err);
-        alert('שגיאה במחיקת אירוע');
-      }
-    };
   },
 
+  
   exportTeamCalendar: async function() {
     const token = storage.getToken && storage.getToken();
     if (!token) {
@@ -281,13 +241,11 @@ const app = {
     }
   },
 
-  loadUsersForAdmin: async function() {
+loadUsersForAdmin: async function() {
     const tbl = document.querySelector('#usersTable tbody');
     if (!tbl) return;
-
     const data = await apiFetch('/users');
     tbl.innerHTML = '';
-
     data.forEach(u => {
       const tr = document.createElement('tr');
       tr.innerHTML = `
@@ -323,7 +281,7 @@ const app = {
     });
 
     tbl.addEventListener('click', async (e) => {
-      // מחיקת משתמש
+      // delete user
       if (e.target.classList.contains('btn-delete-user')) {
         const id = e.target.dataset.id;
         if (!confirm('למחוק את המשתמש הזה וכל האירועים שלו?')) return;
@@ -338,7 +296,7 @@ const app = {
         return;
       }
 
-      // שינוי תפקיד
+      // change role
       if (e.target.tagName === 'BUTTON' && e.target.dataset.role) {
         const id = e.target.dataset.id;
         const role = e.target.dataset.role;
@@ -352,53 +310,10 @@ const app = {
         }
       }
     });
-
-    // *** רשימת כל האירועים למנהל + מחיקה ***
+    // load all events for admin view
     const evs = await apiFetch('/events');
     const all = document.getElementById('allEvents');
-
-    if (all) {
-      all.innerHTML = '';
-      const ul = document.createElement('ul');
-
-      evs.forEach(ev => {
-        const li = document.createElement('li');
-
-        const span = document.createElement('span');
-        span.textContent = `${ev.event_date} — ${ev.full_name} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}`;
-        li.appendChild(span);
-
-        const btn = document.createElement('button');
-        btn.textContent = 'מחק';
-        btn.className = 'btn-secondary btn-delete-event';
-        btn.dataset.id = ev.id;
-        li.appendChild(btn);
-
-        ul.appendChild(li);
-      });
-
-      all.appendChild(ul);
-
-      all.onclick = async (e) => {
-        const target = e.target;
-        if (!target || !target.classList.contains('btn-delete-event')) return;
-
-        const id = target.dataset.id;
-        if (!id) return;
-
-        const ok = confirm('האם אתה בטוח שברצונך למחוק את האירוע?');
-        if (!ok) return;
-
-        try {
-          await apiFetch(`/events/${id}`, { method: 'DELETE' });
-          alert('האירוע נמחק');
-          app.loadUsersForAdmin(); // רענון הרשימה המלאה
-        } catch (err) {
-          console.error(err);
-          alert('שגיאה במחיקת אירוע');
-        }
-      };
-    }
+    all.innerHTML = '<ul>' + evs.map(ev => `<li>${ev.event_date} — ${ev.full_name} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}</li>`).join('') + '</ul>';
   }
 };
 
@@ -410,9 +325,12 @@ if (document.body.contains(document.querySelector('#myEventsList'))) {
   app.loadMyEventsList();
 }
 
+
 if (document.body.contains(document.querySelector('#myCalendar'))) {
   app.initMyEventsCalendar();
 }
+
+
 
 if (document.body.contains(document.querySelector('#my_color'))) {
   const user = storage.getUser && storage.getUser();
@@ -429,7 +347,6 @@ if (document.body.contains(document.querySelector('#my_color'))) {
     });
   }
 }
-
 // Hide admin navigation link for non-staff users
 document.addEventListener('DOMContentLoaded', () => {
   try {
@@ -446,6 +363,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+
 const exportBtn = document.querySelector('#exportExcelBtn');
 if (exportBtn && app.exportTeamCalendar) {
   exportBtn.addEventListener('click', () => {
@@ -455,6 +373,5 @@ if (exportBtn && app.exportTeamCalendar) {
 
 // register service worker
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('/service-worker.js')
-    .then(()=>console.log('SW registered'))
-    .catch(()=>{});
+  navigator.serviceWorker.register('/service-worker.js').then(()=>console.log('SW registered')).catch(()=>{});
+}
