@@ -355,9 +355,53 @@ loadUsersForAdmin: async function() {
     // load all events for admin view
     const evs = await apiFetch('/events');
     const all = document.getElementById('allEvents');
-    all.innerHTML = '<ul>' + evs.map(ev => `<li>${ev.event_date} — ${ev.full_name} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}</li>`).join('') + '</ul>';
+
+    if (all) {
+      all.innerHTML = '';
+      const ul = document.createElement('ul');
+
+      evs.forEach(ev => {
+        const li = document.createElement('li');
+
+        const span = document.createElement('span');
+        span.textContent = `${ev.event_date} — ${ev.full_name} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}`;
+        li.appendChild(span);
+
+        const btn = document.createElement('button');
+        btn.textContent = 'מחק';
+        btn.className = 'btn-secondary btn-delete-event';
+        btn.dataset.id = ev.id;
+        li.appendChild(btn);
+
+        ul.appendChild(li);
+      });
+
+      all.appendChild(ul);
+
+      // מחיקה מתוך מסך הניהול
+      all.onclick = async (e) => {
+        const target = e.target;
+        if (!target || !target.classList.contains('btn-delete-event')) return;
+
+        const id = target.dataset.id;
+        if (!id) return;
+
+        const ok = confirm('האם אתה בטוח שברצונך למחוק את האירוע?');
+        if (!ok) return;
+
+        try {
+          await apiFetch(`/events/${id}`, { method: 'DELETE' });
+          alert('האירוע נמחק');
+          app.loadUsersForAdmin(); // רענון לאחר מחיקה
+        } catch (err) {
+          console.error(err);
+          alert('שגיאה במחיקת אירוע');
+        }
+      };
+    }
   }
 };
+
 
 if (document.body.contains(document.querySelector('#usersTable'))) {
   app.loadUsersForAdmin();
