@@ -1,0 +1,71 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ניהול משתמשים ואירועים</title>
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <script id="guard-non-staff">
+    (function() {
+      try {
+        var raw = localStorage.getItem('user');
+        if (!raw) {
+          window.location = '/login.html';
+          return;
+        }
+        var user = JSON.parse(raw);
+        if (!user || user.role !== 'staff') {
+          window.location = '/index.html';
+        }
+      } catch (e) {
+        window.location = '/login.html';
+      }
+    })();
+  </script>
+
+  <header class="app-header">
+    <div class="app-brand">
+      <span class="app-title">יומן מדור</span>
+    </div>
+    <nav class="app-nav">
+      <a href="/index.html">יומן כלל המדור</a>
+      <a href="/myevents.html">היומן שלי</a>
+      <a id="adminLink" href="/admin.html" class="active">ניהול</a>
+    </nav>
+    <div class="app-user">
+      <span id="user-info"></span>
+      <button id="btn-logout" class="btn-secondary">התנתק</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="card">
+      <h2>ניהול משתמשים</h2>
+      <div class="table-wrapper">
+        <table id="usersTable">
+          <thead>
+            <tr>
+              <th>ת״ז</th>
+              <th>שם</th>
+              <th>תפקיד</th>
+              <th>צבע ביומן</th>
+              <th>שנה תפקיד</th>
+          <th>מחק משתמש</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>כל האירועים</h2>
+      <div id="allEvents" class="events-list"></div>
+    </section>
+  </main>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

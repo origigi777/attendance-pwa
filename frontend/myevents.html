@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>היומן האישי שלי</title>
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="app-brand">
+      <span class="app-title">יומן מדור</span>
+    </div>
+    <nav class="app-nav">
+      <a href="/index.html">יומן כלל המדור</a>
+      <a href="/myevents.html" class="active">היומן שלי</a>
+      <a id="adminLink" href="/admin.html">ניהול</a>
+    </nav>
+    <div class="app-user">
+      <span id="user-info"></span>
+      <button id="btn-logout" class="btn-secondary">התנתק</button>
+    </div>
+  </header>
+
+  <main class="app-main">
+    <section class="card">
+      <h2>היומן האישי שלי</h2>
+      <div id="myCalendar" class="calendar-personal"></div>
+    </section>
+
+    <section class="card">
+      <h3>הצבע שלי ביומן</h3>
+      <p class="section-subtitle">בחר צבע שיופיע עבור האירועים שלך ביומן הכללי וביומן האישי</p>
+      <form id="colorForm" class="form-vertical">
+        <label for="my_color">צבע האירועים שלי</label>
+        <input type="color" id="my_color" />
+        <button type="submit" class="btn-primary">שמור צבע</button>
+      </form>
+    </section>
+
+
+    <section class="card">
+      <h3>יצירת אירוע חדש</h3>
+      <form id="eventForm" class="form-vertical">
+        <label for="event_date">תאריך</label>
+        <input type="date" id="event_date" required />
+
+        <label for="type">סוג</label>
+        <select id="type">
+          <option value="מהבית">מהבית</option>
+          <option value="מחלה">מחלה</option>
+          <option value="משרד אחר">משרד אחר</option>
+          <option value="אחר">אחר</option>
+        </select>
+
+        <label for="notes">הערות / פירוט</label>
+        <textarea id="notes" rows="3" placeholder="לדוגמה: סיבה, מיקום, פרטים נוספים"></textarea>
+
+        <button type="submit" class="btn-primary">שמור</button>
+      </form>
+    </section>
+
+    <section class="card">
+      <h3>האירועים שלי</h3>
+      <ul id="myEventsList" class="events-list"></ul>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
