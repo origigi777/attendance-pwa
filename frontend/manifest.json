@@ -1,6 +1,6 @@
 {
   "name": "מדור - יומן",
-  "short_name": "יומן",
+  "short_name": "יומן מדור",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#ffffff",
