@@ -295,3 +295,19 @@ th {
     margin-top: 16px;
   }
 }
+
+.btn-delete-event {
+  color: #b91c1c !important; /* אדום כהה וברור */
+  font-weight: bold;
+  border: 1px solid #b91c1c;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: #ffe5e5;
+}
+
+.btn-delete-event:hover {
+  background: #b91c1c;
+  color: white !important;
+  cursor: pointer;
+}
+
