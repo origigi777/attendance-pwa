@@ -201,13 +201,55 @@ const app = {
     const data = await apiFetch('/events/mine');
     const ul = document.getElementById('myEventsList');
     if (!ul) return;
+
     ul.innerHTML = '';
+
     data.forEach(ev => {
       const li = document.createElement('li');
-      li.textContent = `${ev.event_date} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}`;
+
+      // טקסט האירוע
+      const span = document.createElement('span');
+      span.textContent = `${ev.event_date} — ${ev.type} ${ev.notes ? ' — ' + ev.notes : ''}`;
+      li.appendChild(span);
+
+      // כפתור מחיקה
+      const btn = document.createElement('button');
+      btn.textContent = 'מחק';
+      btn.className = 'btn-secondary btn-delete-event';
+      btn.dataset.id = ev.id; // מזהה האירוע למחיקה
+      li.appendChild(btn);
+
       ul.appendChild(li);
     });
+
+    // מאזין למחיקה
+    ul.onclick = async (e) => {
+      const target = e.target;
+      if (!target || !target.classList.contains('btn-delete-event')) return;
+
+      const id = target.dataset.id;
+      if (!id) return;
+
+      const ok = confirm('האם אתה בטוח שברצונך למחוק את האירוע?');
+      if (!ok) return;
+
+      try {
+        await apiFetch(`/events/${id}`, { method: 'DELETE' });
+        alert('האירוע נמחק');
+        app.loadMyEventsList();
+
+        // רענון יומן אישי אם קיים
+        if (document.body.contains(document.querySelector('#myCalendar'))) {
+          app.initMyEventsCalendar();
+        }
+
+      } catch (err) {
+        console.error(err);
+        alert('שגיאה במחיקת אירוע');
+      }
+    };
   },
+
 
   
   exportTeamCalendar: async function() {
