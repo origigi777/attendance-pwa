@@ -1,4 +1,6 @@
 
+<img width="814" height="814" alt="Sketch" src="https://github.com/user-attachments/assets/4d5549e5-eefa-4281-a5a3-e7e01f022904" />
+
 # Attendance-PWA
 
 Simple attendance/calendar system (PWA) using Node.js + Express + SQLite.
