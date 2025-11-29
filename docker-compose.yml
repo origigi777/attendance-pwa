@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  attendance-app:
+    build: .
+    container_name: attendance-app
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
